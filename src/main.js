@@ -1,8 +1,3 @@
-function calculateSimpleRevenue(purchase, _product) {
-    const { discount, sale_price, quantity } = purchase;
-    const discountFactor = 1 - discount / 100;
-    return sale_price * quantity * discountFactor;
-}
 
 function calculateBonusByProfit(index, total, seller) {
     const { profit } = seller;
@@ -10,13 +5,23 @@ function calculateBonusByProfit(index, total, seller) {
     if (index === 0) {
         return profit * 0.15;
     }
+
     if (index === 1 || index === 2) {
         return profit * 0.10;
     }
+
     if (index === total - 1) {
         return 0;
     }
+
     return profit * 0.05;
+}
+
+function calculateSimpleRevenue(purchase, _product) {
+    const { discount, sale_price, quantity } = purchase;
+    const discountFactor = 1 - discount / 100;
+
+    return sale_price * quantity * discountFactor;
 }
 
 function analyzeSalesData(data, options) {
@@ -50,11 +55,12 @@ function analyzeSalesData(data, options) {
         products_sold: {}
     }));
 
-    // Индексы
+    // Индексация продавцов
     const sellerIndex = Object.fromEntries(
         sellerStats.map(seller => [seller.id, seller])
     );
 
+    // Индексация товаров
     const productIndex = Object.fromEntries(
         data.products.map(product => [product.sku, product])
     );
@@ -83,11 +89,12 @@ function analyzeSalesData(data, options) {
         });
     });
 
-    // Сортировка по прибыли
+    // Сортировка продавцов по прибыли
     sellerStats.sort((a, b) => b.profit - a.profit);
 
-    // Назначение бонусов и топ-10 товаров
+    // Назначение бонусов и формирование топ-10 товаров
     const total = sellerStats.length;
+
     sellerStats.forEach((seller, index) => {
         seller.bonus = calculateBonus(index, total, seller);
 
@@ -97,7 +104,7 @@ function analyzeSalesData(data, options) {
             .slice(0, 10);
     });
 
-    // Итоговый отчёт
+    // Формирование итогового отчёта
     return sellerStats.map(seller => ({
         seller_id: seller.id,
         name: seller.name,
