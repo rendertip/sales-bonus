@@ -78,7 +78,7 @@ function analyzeSalesData(data, options) {
             const cost = product.purchase_price * item.quantity;
             const profit = revenue - cost;
 
-            seller.revenue += revenue;
+            seller.revenue += +revenue.toFixed(2);
             seller.profit += profit;
             
 
@@ -89,7 +89,8 @@ function analyzeSalesData(data, options) {
         });
     });
 
-    sellerStats.sort((a, b) => b.quantity - a.quantity);
+    sellerStats.sort((a, b) => b.profit - a.profit);
+
 
     // Назначение бонусов и формирование топ-10 товаров
     const total = sellerStats.length;
@@ -98,12 +99,8 @@ function analyzeSalesData(data, options) {
         seller.bonus = calculateBonus(index, total, seller);
     seller.top_products = Object.entries(seller.products_sold)
         .map(([sku, quantity]) => ({ sku, quantity }))
-    .sort((a, b) => {
-        if (b.quantity !== a.quantity) {
-            return b.quantity - a.quantity;
-        }
-        return a.sku.localeCompare(b.sku);
-    })
+    .sort((a, b) => b.quantity - a.quantity)
+
     .slice(0, 10);
 });
 
