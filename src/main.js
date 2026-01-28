@@ -77,7 +77,7 @@ function analyzeSalesData(data, options) {
         record.items.forEach(item => {
             const product = productIndex[item.sku];
             if (!product) return;
-            seller.sales_count += item.quantity;
+            seller.sales_count += 1;
             // Себестоимость
             const cost = product.purchase_price * item.quantity;
 
