@@ -89,20 +89,28 @@ function analyzeSalesData(data, options) {
         });
     });
 
-    // Сортировка продавцов по прибыли
-    sellerStats.sort((a, b) => b.profit - a.profit);
+    sellerStats.sort((a, b) => {
+    if (b.profit !== a.profit) {
+        return b.profit - a.profit;
+    }
+    return a.id.localeCompare(b.id);
+});
 
     // Назначение бонусов и формирование топ-10 товаров
     const total = sellerStats.length;
 
     sellerStats.forEach((seller, index) => {
         seller.bonus = calculateBonus(index, total, seller);
-
-        seller.top_products = Object.entries(seller.products_sold)
-            .map(([sku, quantity]) => ({ sku, quantity }))
-            .sort((a, b) => b.quantity - a.quantity)
-            .slice(0, 10);
-    });
+    seller.top_products = Object.entries(seller.products_sold)
+        .map(([sku, quantity]) => ({ sku, quantity }))
+    .sort((a, b) => {
+        if (b.quantity !== a.quantity) {
+            return b.quantity - a.quantity;
+        }
+        return a.sku.localeCompare(b.sku);
+    })
+    .slice(0, 10);
+});
 
     // Формирование итогового отчёта
     return sellerStats.map(seller => ({
@@ -113,5 +121,4 @@ function analyzeSalesData(data, options) {
         sales_count: seller.sales_count,
         top_products: seller.top_products,
         bonus: +seller.bonus.toFixed(2)
-    }));
-}
+    }));}
