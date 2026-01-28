@@ -89,7 +89,7 @@ function analyzeSalesData(data, options) {
         });
     });
 
-    sellerStats.s.sort((a, b) => b.quantity - a.quantity);
+    sellerStats.sort((a, b) => b.quantity - a.quantity);
 
     // Назначение бонусов и формирование топ-10 товаров
     const total = sellerStats.length;
